@@ -13,8 +13,9 @@
             vn (assoc :vn vn))))
 
 (defn <-values [type rest]
-  (if (= :f type)
-    (vec (map <-idx-group rest))
+  (case type
+    :f (vec (map <-idx-group rest))
+    :g nil
     (vec (map s/->float rest))))
 
 (defn- <-line [line]
@@ -28,7 +29,9 @@
   (let [lines (->> (str/split-lines obj-str)
                    (filter (comp not (some-fn str/blank? comment?))))]
     (reduce (fn [spec [type val]]
-              (update spec type (comp vec conj) val))
+              (if (and type val)
+                (update spec type (comp vec conj) val)
+                spec))
             {} (map <-line lines))))
 
 (defn- sort-verts [faces]

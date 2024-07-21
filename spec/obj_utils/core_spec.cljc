@@ -20,6 +20,12 @@
       (should= {} (sut/parse (->lines "# this is a comment"
                                       "#this is another comment"))))
 
+    (context "groups"
+
+      (it "are ignored for the time being"
+        (should= {}
+                 (sut/parse "g teapot"))))
+
     (context "vertices"
 
       (it "one"
@@ -183,7 +189,7 @@
       )
     )                                                       ;endregion
 
-  ; region ->vecs
+  ; region alignment
   (context "builds vectors for VBOs"
 
     (it "single face with single vertex"
