@@ -45,27 +45,53 @@
 
     (context "texture coordinates"
 
-      (it "one"
-        (should= {:vt [[1.0 1.0]]}
-                 (sut/parse "vt 1.0 1.0")))
+      (context "u v"
 
-      (it "two"
-        (should= {:vt [[0.0 0.0]
-                       [1.0 1.0]]}
-                 (sut/parse (->lines "vt 0.0 0.0"
-                                     "vt 1.0 1.0"))))
+        (it "one"
+          (should= {:vt [[1.0 1.0]]}
+                   (sut/parse "vt 1.0 1.0")))
 
-      (it "many"
-        (should= {:vt [[0.0 0.0]
-                       [1.0 1.0]
-                       [2.0 2.0]
-                       [3.0 3.0]
-                       [4.0 4.0]]}
-                 (sut/parse (->lines "vt 0.0 0.0"
-                                     "vt 1.0 1.0"
-                                     "vt 2.0 2.0"
-                                     "vt 3.0 3.0"
-                                     "vt 4.0 4.0")))))
+        (it "two"
+          (should= {:vt [[0.0 0.0]
+                         [1.0 1.0]]}
+                   (sut/parse (->lines "vt 0.0 0.0"
+                                       "vt 1.0 1.0"))))
+
+        (it "many"
+          (should= {:vt [[0.0 0.0]
+                         [1.0 1.0]
+                         [2.0 2.0]
+                         [3.0 3.0]
+                         [4.0 4.0]]}
+                   (sut/parse (->lines "vt 0.0 0.0"
+                                       "vt 1.0 1.0"
+                                       "vt 2.0 2.0"
+                                       "vt 3.0 3.0"
+                                       "vt 4.0 4.0")))))
+
+      (context "u v w"
+
+        (it "one"
+          (should= {:vt [[1.0 1.0 1.0]]}
+                   (sut/parse "vt 1.0 1.0 1.0")))
+
+        (it "two"
+          (should= {:vt [[0.0 0.0 0.0]
+                         [1.0 1.0 1.0]]}
+                   (sut/parse (->lines "vt 0.0 0.0 0.0"
+                                       "vt 1.0 1.0 1.0"))))
+
+        (it "many"
+          (should= {:vt [[0.0 0.0 0.0]
+                         [1.0 1.0 1.0]
+                         [2.0 2.0 2.0]
+                         [3.0 3.0 3.0]
+                         [4.0 4.0 4.0]]}
+                   (sut/parse (->lines "vt 0.0 0.0 0.0"
+                                       "vt 1.0 1.0 1.0"
+                                       "vt 2.0 2.0 2.0"
+                                       "vt 3.0 3.0 3.0"
+                                       "vt 4.0 4.0 4.0"))))))
 
     (context "normals"
 
