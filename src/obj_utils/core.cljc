@@ -30,3 +30,24 @@
     (reduce (fn [spec [type val]]
               (update spec type (comp vec conj) val))
             {} (map <-line lines))))
+
+(defn- sort-verts [faces]
+  (->> (flatten faces)
+       (reduce (fn [verts {:keys [v vt vn]}]
+                 (assoc verts v {:vt vt :vn vn})) {})
+       (into (sorted-map))
+       vals))
+
+(defn- <-attrib [slices attribs key]
+  (-> (map #(nth attribs (dec (get % key))) slices)
+      flatten))
+
+(defn align-idxs
+  "Prepares obj components for loading into a VBO"
+  [{:keys [v vt vn f]}]
+  (let [slices (sort-verts f)]
+    (cond->
+      {:vertices (apply concat v)
+       :idxs     (mapcat (partial map (comp dec :v)) f)}
+      vt (assoc :tex-coords (<-attrib slices vt :vt))
+      vn (assoc :normals (<-attrib slices vn :vn)))))

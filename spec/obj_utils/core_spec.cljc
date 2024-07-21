@@ -106,16 +106,16 @@
 
       (it "two"
         (should= {:vn [[1.0 1.0 1.0]
-                      [2.0 2.0 2.0]]}
+                       [2.0 2.0 2.0]]}
                  (sut/parse (->lines "vn 1.0 1.0 1.0"
                                      "vn 2.0 2.0 2.0"))))
 
       (it "many"
         (should= {:vn [[1.0 1.0 1.0]
-                      [2.0 2.0 2.0]
-                      [3.0 3.0 3.0]
-                      [4.0 4.0 4.0]
-                      [5.0 5.0 5.0]]}
+                       [2.0 2.0 2.0]
+                       [3.0 3.0 3.0]
+                       [4.0 4.0 4.0]
+                       [5.0 5.0 5.0]]}
                  (sut/parse (->lines "vn 1.0 1.0 1.0"
                                      "vn 2.0 2.0 2.0"
                                      "vn 3.0 3.0 3.0"
@@ -142,44 +142,199 @@
                                      "f 1// 2// 3//"))))
 
       (it "with single vertex/texture pair"
-        (should= {:v [[0.0 0.0 0.0]]
+        (should= {:v  [[0.0 0.0 0.0]]
                   :vt [[0.0 0.0]]
-                  :f [[{:v 1 :vt 1}]]}
+                  :f  [[{:v 1 :vt 1}]]}
                  (sut/parse (->lines "v 0 0 0"
                                      "vt 0 0"
                                      "f 1/1/"))))
 
       (it "with multiple vertex/texture pairs"
-        (should= {:v [[0.0 0.0 0.0]
-                      [1.0 1.0 1.0]]
+        (should= {:v  [[0.0 0.0 0.0]
+                       [1.0 1.0 1.0]]
                   :vt [[0.0 0.0]]
-                  :f [[{:v 1 :vt 1} {:v 2 :vt 1}]]}
+                  :f  [[{:v 1 :vt 1} {:v 2 :vt 1}]]}
                  (sut/parse (->lines "v 0 0 0"
                                      "v 1 1 1"
                                      "vt 0 0"
                                      "f 1/1/ 2/1/"))))
 
       (it "with single vertex/texture/normal tuple"
-        (should= {:v [[0.0 0.0 0.0]]
+        (should= {:v  [[0.0 0.0 0.0]]
                   :vt [[0.0 0.0]]
                   :vn [[1.0 0.0 0.0]]
-                  :f [[{:v 1 :vt 1 :vn 1}]]}
+                  :f  [[{:v 1 :vt 1 :vn 1}]]}
                  (sut/parse (->lines "v 0 0 0"
                                      "vt 0 0"
                                      "vn 1 0 0"
                                      "f 1/1/1"))))
 
       (it "with multiple vertex/texture/normal tuples"
-        (should= {:v [[0.0 0.0 0.0]
-                      [1.0 1.0 1.0]]
+        (should= {:v  [[0.0 0.0 0.0]
+                       [1.0 1.0 1.0]]
                   :vt [[0.0 0.0]]
                   :vn [[1.0 0.0 0.0]]
-                  :f [[{:v 1 :vt 1} {:v 2 :vt 1}]]}
+                  :f  [[{:v 1 :vt 1} {:v 2 :vt 1}]]}
                  (sut/parse (->lines "v 0 0 0"
                                      "v 1 1 1"
                                      "vt 0 0"
                                      "vn 1 0 0"
                                      "f 1/1/ 2/1/"))))
       )
-    ) ;endregion
+    )                                                       ;endregion
+
+  ; region ->vecs
+  (context "builds vectors for VBOs"
+
+    (it "single face with single vertex"
+      (should= {:vertices [0.0 0.0 0.0]
+                :idxs     [0]}
+               (sut/align-idxs
+                 {:v [[0.0 0.0 0.0]]
+                  :f [[{:v 1}]]})))
+
+    (it "single face with 3 vertices"
+      (should= {:vertices [0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0]
+                :idxs     [0 1 2]}
+               (sut/align-idxs
+                 {:v [[0.0 0.0 0.0]
+                      [1.0 0.0 0.0]
+                      [0.0 1.0 0.0]]
+                  :f [[{:v 1} {:v 2} {:v 3}]]})))
+
+    (it "single face with 3 vertices, out of order"
+      (should= {:vertices [0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0]
+                :idxs     [2 0 1]}
+               (sut/align-idxs
+                 {:v [[0.0 0.0 0.0]
+                      [1.0 0.0 0.0]
+                      [0.0 1.0 0.0]]
+                  :f [[{:v 3} {:v 1} {:v 2}]]})))
+
+    (it "two faces with shared vertices"
+      (should= {:vertices [0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0]
+                :idxs     [0 1 2 0 1 2]}
+               (sut/align-idxs
+                 {:v [[0.0 0.0 0.0]
+                      [1.0 0.0 0.0]
+                      [0.0 1.0 0.0]]
+                  :f [[{:v 1} {:v 2} {:v 3}]
+                      [{:v 1} {:v 2} {:v 3}]]})))
+
+    (it "single vertex/texture coord/face tuple"
+      (should= {:vertices   [0.0 0.0 0.0]
+                :tex-coords [0.0 0.0]
+                :idxs       [0]}
+               (sut/align-idxs
+                 {:v  [[0.0 0.0 0.0]]
+                  :vt [[0.0 0.0]]
+                  :f  [[{:v 1 :vt 1}]]})))
+
+    (it "single face with 3 vertices, 1 texture coord"
+      (should= {:vertices   [0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0]
+                :tex-coords [0.0 0.0 0.0 0.0 0.0 0.0]
+                :idxs       [0 1 2]}
+               (sut/align-idxs
+                 {:v  [[0.0 0.0 0.0]
+                       [1.0 0.0 0.0]
+                       [0.0 1.0 0.0]]
+                  :vt [[0.0 0.0]]
+                  :f  [[{:v 1 :vt 1} {:v 2 :vt 1} {:v 3 :vt 1}]]})))
+
+    (it "two faces with 3 identical vertices, 1 texture coord"
+      (should= {:vertices   [0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0]
+                :tex-coords [0.0 0.0 0.0 0.0 0.0 0.0]
+                :idxs       [0 1 2 0 1 2]}
+               (sut/align-idxs
+                 {:v  [[0.0 0.0 0.0]
+                       [1.0 0.0 0.0]
+                       [0.0 1.0 0.0]]
+                  :vt [[0.0 0.0]]
+                  :f  [[{:v 1 :vt 1} {:v 2 :vt 1} {:v 3 :vt 1}]
+                       [{:v 1 :vt 1} {:v 2 :vt 1} {:v 3 :vt 1}]]})))
+
+    (it "two faces with 3 different vertices, 1 texture coord"
+      (should= {:vertices   [0.0 0.0 0.0 1.0 0.0 0.0
+                             0.0 1.0 0.0 0.0 0.0 1.0
+                             1.0 1.0 0.0 0.0 1.0 1.0]
+                :tex-coords [0.0 0.0 0.0 0.0
+                             0.0 0.0 0.0 0.0
+                             0.0 0.0 0.0 0.0]
+                :idxs       [0 1 2 5 4 3]}
+               (sut/align-idxs
+                 {:v  [[0.0 0.0 0.0]
+                       [1.0 0.0 0.0]
+                       [0.0 1.0 0.0]
+                       [0.0 0.0 1.0]
+                       [1.0 1.0 0.0]
+                       [0.0 1.0 1.0]]
+                  :vt [[0.0 0.0]]
+                  :f  [[{:v 1 :vt 1} {:v 2 :vt 1} {:v 3 :vt 1}]
+                       [{:v 6 :vt 1} {:v 5 :vt 1} {:v 4 :vt 1}]]})))
+
+    (it "two faces with 3 different vertices, 2 texture coords"
+      (should= {:vertices   [0.0 0.0 0.0 1.0 0.0 0.0
+                             0.0 1.0 0.0 0.0 0.0 1.0
+                             1.0 1.0 0.0 0.0 1.0 1.0]
+                :tex-coords [1.0 0.0 0.0 0.0
+                             0.0 0.0 1.0 0.0
+                             1.0 0.0 0.0 0.0]
+                :idxs       [0 1 2 3 4 5]}
+               (sut/align-idxs
+                 {:v  [[0.0 0.0 0.0]
+                       [1.0 0.0 0.0]
+                       [0.0 1.0 0.0]
+                       [0.0 0.0 1.0]
+                       [1.0 1.0 0.0]
+                       [0.0 1.0 1.0]]
+                  :vt [[0.0 0.0]
+                       [1.0 0.0]]
+                  :f  [[{:v 1 :vt 2} {:v 2 :vt 1} {:v 3 :vt 1}]
+                       [{:v 4 :vt 2} {:v 5 :vt 2} {:v 6 :vt 1}]]})))
+
+    (it "two faces with 3 different vertices out of order, 2 texture coords"
+      (should= {:vertices   [0.0 0.0 0.0 1.0 0.0 0.0
+                             0.0 1.0 0.0 0.0 0.0 1.0
+                             1.0 1.0 0.0 0.0 1.0 1.0]
+                :tex-coords [1.0 0.0 0.0 0.0
+                             0.0 0.0 1.0 0.0
+                             1.0 0.0 0.0 0.0]
+                :idxs       [0 1 2 5 4 3]}
+               (sut/align-idxs
+                 {:v  [[0.0 0.0 0.0]
+                       [1.0 0.0 0.0]
+                       [0.0 1.0 0.0]
+                       [0.0 0.0 1.0]
+                       [1.0 1.0 0.0]
+                       [0.0 1.0 1.0]]
+                  :vt [[0.0 0.0]
+                       [1.0 0.0]]
+                  :f  [[{:v 1 :vt 2} {:v 2 :vt 1} {:v 3 :vt 1}]
+                       [{:v 6 :vt 1} {:v 5 :vt 2} {:v 4 :vt 2}]]})))
+
+    (it "two faces with 3 different vertices, 2 texture coords, 2 normals"
+      (should= {:vertices   [0.0 0.0 0.0 1.0 0.0 0.0
+                             0.0 1.0 0.0 0.0 0.0 1.0
+                             1.0 1.0 0.0 0.0 1.0 1.0]
+                :tex-coords [1.0 0.0 0.0 0.0
+                             0.0 0.0 1.0 0.0
+                             1.0 0.0 0.0 0.0]
+                :normals    [1.0 0.0 0.0 0.0 0.0 1.0
+                             0.0 0.0 1.0 1.0 0.0 0.0
+                             1.0 0.0 0.0 0.0 0.0 1.0]
+                :idxs       [0 1 2 5 4 3]}
+               (sut/align-idxs
+                 {:v  [[0.0 0.0 0.0]
+                       [1.0 0.0 0.0]
+                       [0.0 1.0 0.0]
+                       [0.0 0.0 1.0]
+                       [1.0 1.0 0.0]
+                       [0.0 1.0 1.0]]
+                  :vt [[0.0 0.0]
+                       [1.0 0.0]]
+                  :vn [[1.0 0.0 0.0]
+                       [0.0 0.0 1.0]]
+                  :f  [[{:v 1 :vt 2 :vn 1} {:v 2 :vt 1 :vn 2} {:v 3 :vt 1 :vn 2}]
+                       [{:v 6 :vt 1 :vn 2} {:v 5 :vt 2 :vn 1} {:v 4 :vt 2 :vn 1}]]})))
+    )                                                       ; endregion
   )
