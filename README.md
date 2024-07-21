@@ -53,9 +53,8 @@ The core library exposes two fns, `parse` and `align-idxs`.
 
 A few things worth mentioning
 - The library is written entirely in .cljc files, so can be used in Clojure or ClojureScript
-- Face indices are left as 1-indexed, as they are in the obj file
+- When parsed, indices are left as 1-indexed, as they are in the obj file. However, once they have been aligned, they are 0-indexed.
 
 ## Planned feature queue
-1. Transform clojure data structure to primitive arrays for loading into vbos
-2. Add options to save verts as map instead of a vector
-3. Add support for groups and other obj field types
+1. Add options to save verts as map instead of a vector
+2. Add support for groups and other obj field types
