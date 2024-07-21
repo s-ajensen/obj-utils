@@ -1,7 +1,7 @@
 # obj-utils
 ### A lightweight Clojure library for parsing/manipulating wavefront obj files
 
-### This library is a work in progress!
+##### This library is a work in progress!
 
 ## Introduction
 
@@ -27,20 +27,19 @@ The core library exposes a single fn, `parse`, which accepts an obj-formatted st
    f 1/2/1 3/2/1 4/1/1")
 
 (obj/parse obj-str)
-; => {:v [[0.0 0.0 0.0]
-;         [1.0 0.0 0.0]
-;         [1.0 1.0 0.0]
-;         [0.0 1.0 0.0]],
-;     :vt [[0.0 1.0]
-;          [1.0 1.0]],
-;     :vn [[0.0 0.0 1.0]],
-;     :f [[{:v 1, :vt 2, :vn 1}
-;          {:v 2, :vt 1, :vn 1}
-;          {:v 3, :vt 2, :vn 1}]
-;         [{:v 1, :vt 2, :vn 1}
-;          {:v 3, :vt 2, :vn 1}
-;          {:v 4, :vt 1, :vn 1}]]}
-;
+=> {:v [[0.0 0.0 0.0]
+        [1.0 0.0 0.0]
+        [1.0 1.0 0.0]
+        [0.0 1.0 0.0]],
+    :vt [[0.0 1.0]
+         [1.0 1.0]],
+    :vn [[0.0 0.0 1.0]],
+    :f [[{:v 1, :vt 2, :vn 1}
+         {:v 2, :vt 1, :vn 1}
+         {:v 3, :vt 2, :vn 1}]
+        [{:v 1, :vt 2, :vn 1}
+         {:v 3, :vt 2, :vn 1}
+         {:v 4, :vt 1, :vn 1}]]}
 ```
 
 A few things worth mentioning
