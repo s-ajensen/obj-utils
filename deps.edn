@@ -1,5 +1,5 @@
 {
- :paths     ["src"]
+ :paths     ["src" "resources"]
  :mvn/repos {"maven_central" {:url "https://repo.maven.apache.org/maven2/"}}
  :deps      {com.cleancoders.c3kit/apron {:git/url "git@github.com:cleancoders/c3kit-apron.git" :git/sha "5b71141c3f4a96af0b68841aa44e089ab59cb505"}
              org.clojure/clojure         {:mvn/version "1.11.1"}}
