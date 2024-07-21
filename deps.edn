@@ -1,0 +1,15 @@
+{
+ :paths     ["src"]
+ :mvn/repos {"maven_central" {:url "https://repo.maven.apache.org/maven2/"}}
+ :deps      {com.cleancoders.c3kit/apron {:git/url "git@github.com:cleancoders/c3kit-apron.git" :git/sha "5b71141c3f4a96af0b68841aa44e089ab59cb505"}
+             org.clojure/clojure         {:mvn/version "1.11.1"}}
+ :aliases   {
+             :test       {:extra-deps  {
+                                        speclj/speclj {:mvn/version "3.4.5"}
+                                        }
+                          :extra-paths ["dev" "spec"]}
+             :repl       {:jvm-opts ["-XstartOnFirstThread"] :main-opts ["-e" "(require,'obj-utils.repl)" "-e" "(in-ns,'obj-utils.repl)" "--repl"] :extra-paths ["dev"]}
+             :spec       {:jvm-opts  ["-XstartOnFirstThread"]
+                          :main-opts ["-m" "speclj.main" "-c"]}
+             }
+ }
