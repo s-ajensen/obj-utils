@@ -10,41 +10,60 @@
   (context "parses"
 
     (it "empty obj file"
-      (should= {} (sut/<-obj "")))
+      (should= {} (sut/parse "")))
 
     (it "with a single comment"
-      (should= {} (sut/<-obj "# this is a comment")))
+      (should= {} (sut/parse "# this is a comment")))
 
     (it "with many comments"
-      (should= {} (sut/<-obj (->lines "# this is a comment"
+      (should= {} (sut/parse (->lines "# this is a comment"
                                       "#this is another comment"))))
 
-    (it "with a single vertex"
-      (should= {:v [[1.0 1.0 1.0]]}
-               (sut/<-obj "v 1.0 1.0 1.0")))
+    (context "vertices"
 
-    (it "with a two vertices"
-      (should= {:v [[1.0 1.0 1.0]
-                    [2.0 2.0 2.0]]}
-               (sut/<-obj (->lines "v 1.0 1.0 1.0"
-                                   "v 2.0 2.0 2.0"))))
+      (it "one"
+        (should= {:v [[1.0 1.0 1.0]]}
+                 (sut/parse "v 1.0 1.0 1.0")))
 
-    (it "with a two vertices"
-      (should= {:v [[1.0 1.0 1.0]
-                    [2.0 2.0 2.0]]}
-               (sut/<-obj (->lines "v 1.0 1.0 1.0"
-                                   "v 2.0 2.0 2.0"))))
+      (it "two"
+        (should= {:v [[1.0 1.0 1.0]
+                      [2.0 2.0 2.0]]}
+                 (sut/parse (->lines "v 1.0 1.0 1.0"
+                                     "v 2.0 2.0 2.0"))))
 
-    (it "with a many vertices"
-      (should= {:v [[1.0 1.0 1.0]
-                    [2.0 2.0 2.0]
-                    [3.0 3.0 3.0]
-                    [4.0 4.0 4.0]
-                    [5.0 5.0 5.0]]}
-               (sut/<-obj (->lines "v 1.0 1.0 1.0"
-                                   "v 2.0 2.0 2.0"
-                                   "v 3.0 3.0 3.0"
-                                   "v 4.0 4.0 4.0"
-                                   "v 5.0 5.0 5.0"))))
+      (it "many"
+        (should= {:v [[1.0 1.0 1.0]
+                      [2.0 2.0 2.0]
+                      [3.0 3.0 3.0]
+                      [4.0 4.0 4.0]
+                      [5.0 5.0 5.0]]}
+                 (sut/parse (->lines "v 1.0 1.0 1.0"
+                                     "v 2.0 2.0 2.0"
+                                     "v 3.0 3.0 3.0"
+                                     "v 4.0 4.0 4.0"
+                                     "v 5.0 5.0 5.0")))))
 
+    (context "texture coordinates"
+
+      (it "one"
+        (should= {:vt [[1.0 1.0]]}
+                 (sut/parse "vt 1.0 1.0")))
+
+      (it "two"
+        (should= {:vt [[0.0 0.0]
+                       [1.0 1.0]]}
+                 (sut/parse (->lines "vt 0.0 0.0"
+                                     "vt 1.0 1.0"))))
+
+      (it "many"
+        (should= {:vt [[0.0 0.0]
+                       [1.0 1.0]
+                       [2.0 2.0]
+                       [3.0 3.0]
+                       [4.0 4.0]]}
+                 (sut/parse (->lines "vt 0.0 0.0"
+                                     "vt 1.0 1.0"
+                                     "vt 2.0 2.0"
+                                     "vt 3.0 3.0"
+                                     "vt 4.0 4.0")))))
     ))

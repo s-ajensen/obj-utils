@@ -9,7 +9,7 @@
   (let [[type & rest] (str/split line #" ")]
     [(keyword type) (vec (map s/->float rest))]))
 
-(defn <-obj [obj-str]
+(defn parse [obj-str]
   (let [lines (->> (str/split-lines obj-str)
                    (filter (comp not comment?))
                    (filter (comp not str/blank?)))]
